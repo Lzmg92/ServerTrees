@@ -1,0 +1,6 @@
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\obj\Debug\ServerTrees.csprojResolveAssemblyReference.cache
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\bin\ServerTrees.dll.config
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\bin\ServerTrees.dll
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\bin\ServerTrees.pdb
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\obj\Debug\ServerTrees.dll
+c:\users\leslie\documents\visual studio 2015\Projects\ServerTrees\ServerTrees\obj\Debug\ServerTrees.pdb

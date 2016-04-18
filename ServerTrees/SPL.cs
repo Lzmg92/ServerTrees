@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ServerTrees
+namespace PruebaTrees
 {
     public class SPL
     {
@@ -19,30 +19,36 @@ namespace ServerTrees
         }
 
         /*INSERTAR*/
-        public TreeNode Insertar(int codl)
+        public TreeNode insert(string disp, string date, Double drating, Double trating)
         {
-            Console.WriteLine("\nElemento: " + codl);
+            Console.WriteLine("\nElemento: " + disp);
             if (raiz == null)
-                raiz = new TreeNode(codl);
+                raiz = new TreeNode(disp, date, drating, trating);
             else
             {
                 auxp = null;
                 auxh = raiz;
                 while (auxh != null)
                 {
-                    if (codl <= auxh.dat)
+                    int comp = string.Compare(disp,  auxh.disp);
+                    if (comp == -1)
                     {
                         auxp = auxh;
                         auxh = auxh.iz;
                     }
-                    else
+                    else if (comp == 1)
                     {
                         auxp = auxh;
                         auxh = auxh.de;
+                    } else {
+                        Console.WriteLine("iguales");
+                        promDat(auxh, drating, trating);
+                        return null;
                     }
                 }
-                TreeNode nuevo = new TreeNode(codl);
-                if (auxp.dat < codl)
+                TreeNode nuevo = new TreeNode(disp, date, drating ,trating);
+                int comp2 = string.Compare(auxp.disp , disp);
+                if (comp2 == -1)
                 {
                     auxp.de = nuevo;
                     Subir(auxp, nuevo);
@@ -53,8 +59,17 @@ namespace ServerTrees
                     Subir(auxp, nuevo);
                 }
             }
-
             return raiz;
+        }
+
+        /*PROMEDIAR*/
+        public void promDat(TreeNode n1, Double dra, Double tra) {
+            Double N1 = n1.drating;
+            Double N2 = dra;
+            n1.drating = (N1+N2) / 2;
+            N1 = n1.trating;
+            N2 = tra;
+            n1.trating = (N1+N2) / 2;
         }
 
         /*ZAG ZAG*/
@@ -65,13 +80,13 @@ namespace ServerTrees
             {
                 Console.WriteLine("zag zag");
                 cont++;
-                TreeNode nuevo = new TreeNode(abuelo.dat);
+                TreeNode nuevo = new TreeNode(abuelo.disp, abuelo.date, abuelo.drating, abuelo.trating);
                 nuevo.iz = abuelo.iz;
                 nuevo.de = abuelo.de;
                 nuevo.de = auxp.iz;
                 abuelo.iz = nuevo;
                 abuelo.de = auxp.de;
-                abuelo.dat = auxp.dat;
+                pasarDatos(abuelo,auxp);
                 if (abuelo == raiz)
                     bandera = false;
                 auxp = abuelo;
@@ -91,10 +106,10 @@ namespace ServerTrees
                 Console.WriteLine("");
             Console.WriteLine("zag zig");
             cont = 0;
-            TreeNode nuevo = new TreeNode(abuelo.dat);
+            TreeNode nuevo = new TreeNode(abuelo.disp, abuelo.date, abuelo.drating, abuelo.trating);
             nuevo.iz = abuelo.iz;
             nuevo.de = abuelo.de;
-            abuelo.dat = auxh.dat;
+            pasarDatos(abuelo,auxh);
             nuevo.de = auxh.iz;
             abuelo.iz = nuevo;
             auxp.iz = auxh.de;
@@ -116,13 +131,13 @@ namespace ServerTrees
             {
                 Console.WriteLine("zig ");
                 cont++;
-                TreeNode nuevo = new TreeNode(abuelo.dat);
+                TreeNode nuevo = new TreeNode(abuelo.disp, abuelo.date, abuelo.drating, abuelo.trating);
                 nuevo.iz = abuelo.iz;
                 nuevo.de = abuelo.de;
                 nuevo.iz = auxp.de;
                 abuelo.de = nuevo;
                 abuelo.iz = auxp.iz;
-                abuelo.dat = auxp.dat;
+                pasarDatos(abuelo, auxp);
                 if (abuelo == raiz)
                     bandera = false;
                 auxp = abuelo;
@@ -141,10 +156,10 @@ namespace ServerTrees
                 Console.WriteLine("");
                 Console.WriteLine("zig zag");
             cont = 0;
-            TreeNode nuevo = new TreeNode(abuelo.dat);
+            TreeNode nuevo = new TreeNode(abuelo.disp, abuelo.date, abuelo.drating, abuelo.trating);
             nuevo.iz = abuelo.iz;
             nuevo.de = abuelo.de;
-            abuelo.dat = auxh.dat;
+            pasarDatos(abuelo,auxh);
             nuevo.iz = auxh.de;
             abuelo.de = nuevo;
             auxp.de = auxh.iz;
@@ -182,6 +197,13 @@ namespace ServerTrees
             cont = 0;
         }
 
+        /*pasar datos */
+        public void pasarDatos(TreeNode recibe, TreeNode envia) {
+            recibe.disp = envia.disp;
+            recibe.date = envia.date;
+            recibe.drating = envia.drating;
+            recibe.trating = envia.trating;
+        }
         /*SUBIR EL VALOR INSERTADO A LA RAIZ*/
         public void Subir(TreeNode padre, TreeNode hijo)
         {
@@ -244,12 +266,13 @@ namespace ServerTrees
                 TreeNode hijo = raiz;
                 while (hijo != nodo)
                 {
-                    if (nodo.dat <= hijo.dat)
+                    int comp = string.Compare(nodo.disp , hijo.disp);
+                    if (comp == -1 || comp ==0)
                     {
                         padre = hijo;
                         hijo = hijo.iz;
                     }
-                    else
+                    else 
                     {
                         padre = hijo;
                         hijo = hijo.de;
@@ -259,32 +282,11 @@ namespace ServerTrees
             }
         }
 
-        /*RECORRIDOS*/
-        public void InOrden()
-        {
-            Console.Write("\n");
-            if (raiz != null)
-                AyudaInOrden(raiz);
-        }
-
-        private void AyudaInOrden(TreeNode nodo)
-        {
-            if (nodo == null)
-            {
-                return;
-            }
-            else
-            {
-                AyudaInOrden(nodo.iz);
-                Console.Write(nodo.dat + " ");
-                AyudaInOrden(nodo.de);
-            }
-        }
-
         /*elimina un elemento de un arbol splay y coloca su antecesor en la raiz*/
-        public TreeNode Eliminar(int codl)
+        public TreeNode Eliminar(string disp)
         {
-            if (codl == raiz.dat)
+            int compr = string.Compare(disp, raiz.disp);
+            if (compr == 0)
             {
                 TreeNode borrado = raiz;
                 if ((raiz.iz == null) && (raiz.de == null))
@@ -321,9 +323,10 @@ namespace ServerTrees
             {
                 TreeNode padre = null;
                 TreeNode hijo = raiz;
-                while (hijo.dat != codl)
+                int comp = string.Compare(disp , hijo.disp );
+                while (comp != 0)
                 {
-                    if (codl <= hijo.dat)
+                    if (comp == -1)
                     {
                         padre = hijo;
                         hijo = hijo.iz;
@@ -333,10 +336,11 @@ namespace ServerTrees
                         padre = hijo;
                         hijo = hijo.de;
                     }
+                    comp = string.Compare(disp, hijo.disp);
                 }
                 Subir(padre, hijo);
                 TreeNode rai = raiz;
-                Eliminar(raiz.dat);
+                Eliminar(raiz.disp);
                 return rai;
             }
         }
@@ -356,23 +360,25 @@ namespace ServerTrees
         }
 
         /*buscar un elemento y lo sube a la raiz*/
-        public TreeNode Buscar(int codl, TreeNode rai, int codtema, String nomb)
+        public TreeNode Buscar(string disp, TreeNode rai, int codtema, String nomb)
         {
             raiz = rai;
-            if (codl == raiz.dat)
+            int comp = string.Compare(disp , raiz.disp );
+            if (comp == 0)
             {
                 Console.WriteLine("Rotacion para busqueda: ");
                 Console.WriteLine("Sin rotacion");
-                Console.WriteLine("Elemento encontrado. Raiz: " + raiz.dat);
+                Console.WriteLine("Elemento encontrado. Raiz: " + raiz.disp);
             }
             else
             {
                 TreeNode padre = null;
                 TreeNode hijo = raiz;
                 Console.WriteLine("Rotacion para busqueda: ");
-                while ((hijo != null) && (hijo.dat != codl))
+                int com = string.Compare(hijo.disp , disp);
+                while ((hijo != null) && com != 0)
                 {
-                    if (codl <= hijo.dat)
+                    if (com == -1)
                     {
                         padre = hijo;
                         hijo = hijo.iz;
@@ -382,31 +388,33 @@ namespace ServerTrees
                         padre = hijo;
                         hijo = hijo.de;
                     }
+                    com = string.Compare(hijo.disp, disp);
                 }
                 if (hijo == null)
                 {
                     TreeNode aux = TieneAbuelo(padre);
                     if (padre != raiz)
                         Subir(aux, padre);                 
-                    Console.WriteLine("El elemento no se encuentra. Raiz: " + raiz.dat);
+                    Console.WriteLine("El elemento no se encuentra. Raiz: " + raiz.disp);
                 }
                 else
                 {
                     Subir(padre, hijo);
-                    Console.WriteLine("Elemento encontrado. Raiz: " + raiz.dat);
+                    Console.WriteLine("Elemento encontrado. Raiz: " + raiz.disp);
                 }
             }
             return raiz;
         }
 
         /*retorna si es miembro un elemento*/
-        public bool Miembro(int dat, TreeNode rai)
+        public bool Miembro(string disp, TreeNode rai)
         {
             raiz = rai;
             TreeNode hijo = raiz;
-            while ((hijo != null) && (hijo.dat != dat))
+            int comp = string.Compare(hijo.disp, disp);
+            while ((hijo != null) && (comp != 0))
             {
-                if (dat <= hijo.dat)
+                if (comp == -1)
                 {
                     hijo = hijo.iz;
                 }
@@ -414,6 +422,7 @@ namespace ServerTrees
                 {
                     hijo = hijo.de;
                 }
+                comp = string.Compare(hijo.disp, disp);
             }
             if (hijo == null)
                 return false;

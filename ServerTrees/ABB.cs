@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ServerTrees
+namespace PruebaTrees
 {
     public class ABB
     {
@@ -39,7 +39,8 @@ namespace ServerTrees
         /*INSERTAR*/
         public void insertNABB(TreeNode nw, TreeNode raiz)
         {
-            if (nw.dat < raiz.dat)
+            int comp = string.Compare(nw.disp, raiz.disp);
+            if (comp == -1)
             {
                 if (raiz.iz == null)
                 {
@@ -51,7 +52,7 @@ namespace ServerTrees
                 }
 
             }
-            else if (nw.dat > raiz.dat)
+            else if (comp == 1)
             {
                 if (raiz.de == null)
                 {
@@ -64,9 +65,9 @@ namespace ServerTrees
             }
         }
 
-        public void insertABB(int dat)
+        public void insert(string disp, string date, Double drating, Double trating)
         {
-            TreeNode nw = new TreeNode(dat);
+            TreeNode nw = new TreeNode(disp, date, drating, trating);
 
             if (vacio())
             {
@@ -77,119 +78,33 @@ namespace ServerTrees
                 insertNABB(nw, raiz);
             }
         }
-        
-         /*RECORRIDOS*/
-        public void PreOrdenABB()
-        {
-            Console.Write("\n");
-            if (raiz != null)
-                AyudaPreOrden(raiz);
-        }
 
-        private void AyudaPreOrden(TreeNode nodo)
-        {
-            if (nodo == null)
-            {
-                return;
-            }
-            Console.Write(nodo.dat + " ");
-            AyudaPreOrden(nodo.iz);
-            AyudaPreOrden(nodo.de);
-        }
-
-        public void InOrden()
-        {
-            Console.Write("\n");
-            if (raiz != null)
-                AyudaInOrden(raiz);
-        }
-
-        private void AyudaInOrden(TreeNode nodo)
-        {
-            if (nodo == null)
-            {
-                return;
-            }
-
-            AyudaPreOrden(nodo.iz);
-            Console.Write(nodo.dat + " ");
-            AyudaPreOrden(nodo.de);
-        }
-
-        public void PostOrden()
-        {
-            Console.Write("\n");
-            if (raiz != null)
-                AyudaPostOrden(raiz);
-        }
-
-        private void AyudaPostOrden(TreeNode nodo)
-        {
-            if (nodo == null)
-            {
-                return;
-            }
-
-            AyudaPreOrden(nodo.iz);
-            AyudaPreOrden(nodo.de);
-            Console.Write(nodo.dat + " ");
-        }
-        
-          /*BUSCAR*/
-        public TreeNode Search(int id, TreeNode r)
+        /*BUSCAR*/
+        public TreeNode Search(string disp, TreeNode r)
         {
             if (r == null)
             {
-                return new TreeNode(-1);
+                return new TreeNode("","",-1,-1);
             }
             else
             {
-                if (id == r.dat)
+                int comp = string.Compare(disp,r.disp);
+                if (comp == 0)
                 {
                 }
-                else if (id < r.dat)
+                else if (comp == -1)
                 {
-                    return Search(id, r.iz);
+                    return Search(disp, r.iz);
                 }
-                else if (id > r.dat)
+                else if (comp == 1)
                 {
-                    return Search(id, r.de);
+                    return Search(disp, r.de);
                 }
             }
             return null;
         }
 
-      /*  public void eliminar(int id)
-        {
-            TreeNode r = Search(id, raiz);
-            if (esHoja(r))
-            {
-                r = null;
-            }
-            else
-            {
 
-            }
-
-        } */
-
-      /*      public TreeNode obtenerPadre(int id)
-        {
-            TreeNode n = new TreeNode(-1);
-            if (!vacio())
-            {
-                n = raiz;
-                TreeNode temporal2;
-                if ()
-                    while (n.)
-                    {
-
-                    }
-            }
-            return n;
-        } */
-
-        /*OBTENER EL MENOR VALOR*/
         public void menorValor()
         {
             if (raiz != null)
@@ -203,7 +118,6 @@ namespace ServerTrees
             }
         }
 
-        /*OBTENER EL MAYOR VALOR*/
         public void mayorValor()
         {
             if (raiz != null)
@@ -216,15 +130,16 @@ namespace ServerTrees
             }
         }
 
-        public bool eliminarABB(int id)
+        public bool eliminar(string disp)
         {
             TreeNode aux = raiz;
             TreeNode padre = raiz;
             bool hijoIquierdo = true;
 
-            while (aux.dat != id)
+            int comp = string.Compare(disp, aux.disp);
+            while (comp !=0)
             {
-                if (id < aux.dat)
+                if (comp == -1 )
                 {
                     hijoIquierdo = true;
                     aux = aux.iz;
@@ -238,6 +153,7 @@ namespace ServerTrees
                 {
                     return false;
                 }
+                comp = string.Compare(disp, aux.disp);
             } //fin del while
             if (esHoja(aux))
             {
@@ -247,14 +163,14 @@ namespace ServerTrees
                 }
                 else if (hijoIquierdo)
                 {
-                    padre.iz = null;
+                    padre.iz= null;
                 }
                 else
                 {
                     padre.de = null;
                 }
             }
-            else if (aux.de == null)
+            else if (aux.de== null)
             {
                 if (aux == raiz)
                 {
@@ -321,7 +237,7 @@ namespace ServerTrees
                 reemplazarPadre.iz = reemplazo.de;
                 reemplazo.de = nodoReemp.de;
             }
-            Console.WriteLine("se reemplaza nodo " + reemplazo.dat);
+            Console.WriteLine("se reemplaza nodo " + reemplazo.disp);
             return reemplazo;
         }
 

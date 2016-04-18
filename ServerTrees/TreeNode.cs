@@ -4,22 +4,29 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace ServerTrees
+namespace PruebaTrees
 {
     public class TreeNode
     {
         String strDot = "";
         #region variables   
         public TreeNode iz;
-        public int dat;
+        public string date;
+        public string disp;
+        public Double drating;
+        public Double trating;
         public TreeNode de;
         #endregion
-        public TreeNode(int dat)
+        public TreeNode(string disp, string date, Double drating, Double trating)
         {
-            this.dat = dat;
+            this.disp = disp;
+            this.date = date;
+            this.drating = drating;
+            this.trating = trating;
             de = iz = null;
         }
 
+        /*--------- Graficar ----------*/
         //Metodo completo para graficar
         public void graph()
         {
@@ -34,7 +41,7 @@ namespace ServerTrees
             strDot = "";
             String ruta = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\Tree.dot";
             String encabezado = "digraph spl {\r\n node [shape=oval]; \r\n graph [bgcolor=\"#003366\"]; \r\n edge [color=white]; \r\n";
-            StreamWriter sw = new StreamWriter(ruta, false);
+            StreamWriter sw = new StreamWriter(ruta,false);
             contDot(nod);
             sw.WriteLine(encabezado);
             sw.WriteLine(strDot);
@@ -47,22 +54,25 @@ namespace ServerTrees
         public void contDot(TreeNode nod)
         {
 
-            strDot = strDot + "nodo" + nod.dat.ToString()
+            strDot = strDot + "nodo" + nod.disp
                     + " [style=filled, "
                     + "color = \"#00CC00\", "
-                    + "label =\"Id: " + nod.dat.ToString()
+                    + "label =\"Disp: " + nod.disp+"\\n"
+                    + "Date: " + nod.date + "\\n"
+                    + "Daily Rat:" + nod.drating.ToString() + "\\n"
+                    + "Total Rat:" + nod.trating.ToString() 
                     + "\" ];\n";
 
 
             if (nod.iz != null)
             {
-                strDot = strDot + "nodo" + nod.dat.ToString() + "-> nodo" + nod.iz.dat.ToString() + ";\n";
+                strDot = strDot + "nodo" + nod.disp + "-> nodo" + nod.iz.disp + ";\n";
                 contDot(nod.iz);
             }
 
             if (nod.de != null)
             {
-                strDot = strDot + "nodo" + nod.dat.ToString() + "-> nodo" + nod.de.dat.ToString() + ";\n";
+                strDot = strDot + "nodo" + nod.disp + "-> nodo" + nod.de.disp + ";\n";
                 contDot(nod.de);
             }
 
@@ -99,7 +109,56 @@ namespace ServerTrees
             catch (Exception ex)
             { }
         }
-    }
 
-}
-}
+        /*-------RECORRIDOS-------*/
+
+        public void inOrden() {
+            rinOrden(this);
+        }
+
+        public void preOrden() {
+            rpreOrden(this);
+        }
+
+        public void postOrden() {
+            rpostOrden(this);
+        }
+
+        public void rinOrden(TreeNode nodo)
+        {
+            if (nodo == null)
+                return;
+            else
+            {
+               rinOrden(nodo.iz);
+                Console.Write(nodo.disp + " ");
+                rinOrden(nodo.de);
+            }
+        }
+
+        public void rpreOrden(TreeNode nodo)
+        {
+            if (nodo == null)
+                return;
+            else
+            {
+                Console.Write(nodo.disp + " ");
+                rpreOrden(nodo.iz);
+                rpreOrden(nodo.de);
+            }
+        }
+
+        public void rpostOrden(TreeNode nodo)
+        {
+            if (nodo == null)
+                return;
+            else
+            {
+                rpostOrden(nodo.iz);
+                rpostOrden(nodo.de);
+                Console.Write(nodo.disp + " ");
+            }
+        }
+
+        }
+    }
